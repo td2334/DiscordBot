@@ -9,9 +9,6 @@ client = discord.Client()
 
 @client.event 
 
-async def on_ready():
-  print("We have logged in as {0.user}".format(client))
-
 @client.event 
 async def on_message(message):
   #No response 
@@ -27,18 +24,25 @@ async def on_message(message):
     await message.channel.send(msg)
   #Responds on general channel 
 
-#Make bot spew random hashtag 
+#Make bot spew hashtag 
 #studyformitsuru
-@tasks.loop(hours = 4 )
-async def randomhashtag():
+@tasks.loop(hours = 12 )
+async def personahashtag():
   channel = client.get_channel(871913431287091210)
   await channel.send("Today is a good day to #StudyForMitsuru")
 
+#Make bot post today in history
+@tasks.loop(hours = 4)
+async def todayinhistory():
+  channel = client.get_channel(871937620597436456)
+  await channel.send("Checkout Today In History")
+  await channel.send("https://www.history.com/this-day-in-history")
 
 @client.event
 async def on_ready():
   print("We have logged in as {0.user}".format(client))
-  randomhashtag.start()
+  personahashtag.start()
+  todayinhistory.start()
 
 keep_alive()
 client.run(os.environ['TOKEN']) 
