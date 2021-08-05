@@ -4,10 +4,9 @@ from keep_alive import keep_alive
 from datetime import datetime
 from discord.ext import commands
 from discord.ext import tasks
+from discord.utils import get 
 
 client = discord.Client()
-
-@client.event 
 
 @client.event 
 async def on_message(message):
@@ -22,7 +21,19 @@ async def on_message(message):
   if message.content.startswith('https' ):
     msg = 'Hi {0.author.mention} Thank You For Sending This Cool Link and Sharing Information!!'.format(message)
     await message.channel.send(msg)
+  
   #Responds on general channel 
+  if message.content.startswith('hi'):
+    msg = "Hello {0.author.mention}".format(message)
+    await message.channel.send(msg)
+    role = get(message.server.roles, id=871074880890744893)
+    await client.add_roles(message.author, role)
+
+#Today in History!
+@tasks.loop(hours = 4 ) 
+async def history(): 
+  channel = client.get_channel(871937620597436456)
+  await channel.send("https")
 
 #Make bot spew hashtag 
 #studyformitsuru
@@ -31,18 +42,16 @@ async def personahashtag():
   channel = client.get_channel(871913431287091210)
   await channel.send("Today is a good day to #StudyForMitsuru")
 
-#Make bot post today in history
-@tasks.loop(hours = 4)
-async def todayinhistory():
-  channel = client.get_channel(871937620597436456)
-  await channel.send("Checkout Today In History")
-  await channel.send("https://www.history.com/this-day-in-history")
+
+
 
 @client.event
 async def on_ready():
   print("We have logged in as {0.user}".format(client))
   personahashtag.start()
-  todayinhistory.start()
+  history.start()
+
+
 
 keep_alive()
 client.run(os.environ['TOKEN']) 
